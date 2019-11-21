@@ -1,5 +1,7 @@
 {
   "name": "favmap",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
