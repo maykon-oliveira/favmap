@@ -21,8 +21,7 @@ export class Tab3Page implements AfterViewInit, OnInit {
       this.location = resp.coords;
 
       this.plt.ready().then(() => {
-        this.http.get('https://oghuxxw1e6.execute-api.us-east-1.amazonaws.com/dev')
-          .subscribe(restaurants => this.initMap(restaurants));
+        this.initMap();
       });
     }).catch((error) => {
       console.log('Error getting location', error);
@@ -43,7 +42,7 @@ export class Tab3Page implements AfterViewInit, OnInit {
     // });
   }
 
-  initMap(restaurants, lat = this.location.latitude, lng = this.location.longitude) {
+  initMap(lat = this.location.latitude, lng = this.location.longitude) {
     const map = new Map('map').setView([lat, lng], 13);
 
     tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
