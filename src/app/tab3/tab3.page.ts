@@ -2,7 +2,7 @@ import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Platform } from '@ionic/angular';
-import { Map, tileLayer } from 'leaflet';
+import { Map, tileLayer, marker, circle, control } from 'leaflet';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 
 @Component({
@@ -12,19 +12,13 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 })
 export class Tab3Page implements AfterViewInit, OnInit {
 
-  location = { latitude: -5.9511452, longitude: -35.2697794 };
+  map: Map;
 
   constructor(private http: HttpClient, private plt: Platform, private geolocation: Geolocation) { }
 
   ngOnInit(): void {
-    this.geolocation.getCurrentPosition().then(resp => {
-      this.location = resp.coords;
-
-      this.plt.ready().then(() => {
-        this.initMap();
-      });
-    }).catch((error) => {
-      console.log('Error getting location', error);
+    this.plt.ready().then(() => {
+      this.initMap();
     });
 
     // let watch = this.geolocation.watchPosition();
@@ -42,12 +36,25 @@ export class Tab3Page implements AfterViewInit, OnInit {
     // });
   }
 
-  initMap(lat = this.location.latitude, lng = this.location.longitude) {
-    const map = new Map('map').setView([lat, lng], 13);
+  initMap() {
+    this.map = new Map('map');
 
     tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    }).addTo(this.map);
+
+    this.map.on('locationfound', this.onLocationFound);
+    this.map.on('locationerror', this.onLocationError);
+
+    this.map.locate({ setView: true, maxZoom: 16 });
+
+    this.map.on('click', e => {
+      const m = marker(e.latlng).addTo(this.map);
+      m.bindPopup('Maykon');
+    });
+    
+    // console.log(this.location.accuracy)
+    // circle({ lat, lng }, this.location.accuracy).addTo(map);
 
     // const customMarkerIcon = icon({
     //   iconUrl: 'assets/images/custom-marker-icon.png',
@@ -61,6 +68,15 @@ export class Tab3Page implements AfterViewInit, OnInit {
     //     .on('click', () => this.router.navigateByUrl('/restaurant'))
     //     .addTo(map).openPopup();
     // });
+  }
+
+  onLocationFound = ({ latlng, accuracy }) => {
+    marker(latlng).addTo(this.map).bindPopup("You are within " + accuracy + " meters from this point").openPopup();
+    circle(latlng, accuracy).addTo(this.map);
+  }
+
+  onLocationError = e => {
+    alert(e.message);
   }
 
 }
