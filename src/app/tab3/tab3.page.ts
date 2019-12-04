@@ -1,9 +1,10 @@
 import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Platform } from '@ionic/angular';
-import { Map, tileLayer, marker, circle, control } from 'leaflet';
+import { Platform, ModalController } from '@ionic/angular';
+import { Map, tileLayer, marker, circle } from 'leaflet';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { AddFavoritePage } from '../add-favorite/add-favorite.page';
 
 @Component({
   selector: 'app-tab3',
@@ -14,19 +15,19 @@ export class Tab3Page implements AfterViewInit, OnInit {
 
   map: Map;
 
-  constructor(private http: HttpClient, private plt: Platform, private geolocation: Geolocation) { }
+  constructor(private modalController: ModalController,
+    private plt: Platform,
+    private geolocation: Geolocation) { }
 
   ngOnInit(): void {
     this.plt.ready().then(() => {
       this.initMap();
     });
 
-    // let watch = this.geolocation.watchPosition();
-    // watch.subscribe((data) => {
-    //   // data can be a set of coordinates, or an error (if an error occurred).
-    //   // data.coords.latitude
-    //   // data.coords.longitude
-    // });
+    this.geolocation.watchPosition().subscribe((data) => {
+      const { latitude, longitude } = data.coords;
+      this.map.setView({ lat: latitude, lng: longitude });
+    });
   }
 
   ngAfterViewInit() {
@@ -49,18 +50,16 @@ export class Tab3Page implements AfterViewInit, OnInit {
     this.map.locate({ setView: true, maxZoom: 16 });
 
     this.map.on('click', e => {
-      const m = marker(e.latlng).addTo(this.map);
-      m.bindPopup('Maykon');
+      this.showModalAddFav((data) => {
+        console.log(data);
+                
+        const m = marker(e.latlng).addTo(this.map);
+        m.bindPopup(data);
+      });
     });
-    
+
     // console.log(this.location.accuracy)
     // circle({ lat, lng }, this.location.accuracy).addTo(map);
-
-    // const customMarkerIcon = icon({
-    //   iconUrl: 'assets/images/custom-marker-icon.png',
-    //   iconSize: [64, 64],
-    //   popupAnchor: [0, -20]
-    // });
 
     // restaurants.forEach((restaurant) => {
     //   marker([restaurant.position.lat, restaurant.position.lgn], { icon: customMarkerIcon })
@@ -68,6 +67,14 @@ export class Tab3Page implements AfterViewInit, OnInit {
     //     .on('click', () => this.router.navigateByUrl('/restaurant'))
     //     .addTo(map).openPopup();
     // });
+  }
+
+  async showModalAddFav(cb) {
+    const modal = await this.modalController.create({
+      component: AddFavoritePage
+    });
+    modal.onDidDismiss().then(cb);
+    return await modal.present();
   }
 
   onLocationFound = ({ latlng, accuracy }) => {
