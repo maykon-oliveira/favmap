@@ -10,6 +10,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AddFavoritePageModule } from './add-favorite/add-favorite.module';
 import { AddFavoritePage } from './add-favorite/add-favorite.page';
+import { Camera } from '@ionic-native/camera/ngx';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -18,6 +20,8 @@ import { AddFavoritePage } from './add-favorite/add-favorite.page';
   providers: [
     StatusBar,
     SplashScreen,
+    Camera,
+    WebView,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

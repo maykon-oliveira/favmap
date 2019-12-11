@@ -9,6 +9,10 @@ const routes: Routes = [
   {
     path: 'add-favorite',
     loadChildren: () => import('./add-favorite/add-favorite.module').then( m => m.AddFavoritePageModule)
+  },
+  {
+    path: 'perfil',
+    loadChildren: () => import('./perfil/perfil.module').then( m => m.PerfilPageModule)
   }
 ];
 @NgModule({

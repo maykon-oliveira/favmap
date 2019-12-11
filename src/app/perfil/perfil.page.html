@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form #form="ngForm" (ngSubmit)="logForm(form)" novalidate>
+    <div style="display: flex; justify-content: center; margin: 20px 0 0;">
+      <ion-avatar (click)="tirarFoto()">
+        <img [src]="imagem" />
+      </ion-avatar>
+    </div>
+    <ion-item>
+      <ion-label>Nome</ion-label>
+      <ion-input type="text" required [(ngModel)]="usuario.nome" ngControl="nome" name="nome"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Sobrenome</ion-label>
+      <ion-input [(ngModel)]="usuario.sobrenome" ngControl="sobrenome" name="sobrenome"></ion-input>
+    </ion-item>
+    <ion-button expand="full" type="submit" block>Salvar</ion-button>
+  </form>
+</ion-content>
